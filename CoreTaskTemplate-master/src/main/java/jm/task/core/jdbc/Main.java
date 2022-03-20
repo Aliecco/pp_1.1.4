@@ -10,18 +10,6 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-//        try {
-//            Session session = factory.getCurrentSession();
-//            session.beginTransaction();
-//            User user = new User("name1", "sessd",(byte) 32);
-//            session.save(user);
-//            User user2 = new User("name2", "AAsessd",(byte) 12);
-//            session.save(user2);
-//            session.getTransaction().commit();
-//        } finally {
-//            //factory.close();
-//        }
-
         UserServiceImpl usr = new UserServiceImpl();
         usr.createUsersTable();
         usr.saveUser("Dale", "Cooper", (byte) 32);
@@ -35,7 +23,5 @@ public class Main {
         }
         usr.cleanUsersTable();
         usr.dropUsersTable();
-
-//        Util.closeConnection();
     }
 }
