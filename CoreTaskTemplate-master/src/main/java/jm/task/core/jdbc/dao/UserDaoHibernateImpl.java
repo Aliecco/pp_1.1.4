@@ -27,13 +27,16 @@ public class UserDaoHibernateImpl implements UserDao {
                     " `age` INT(3) NULL, " +
                     " PRIMARY KEY (`id`));";
 
-            session.createSQLQuery(str).addEntity(User.class);
-            session.close();
+            session.createSQLQuery(str).addEntity(User.class).executeUpdate();
+            session.getTransaction().commit();
         } catch (Exception e) {
             if (session != null) {
                 session.getTransaction().rollback();
             }
             e.printStackTrace();
+        } finally {
+            assert session != null;
+            session.close();
         }
     }
 
@@ -44,14 +47,16 @@ public class UserDaoHibernateImpl implements UserDao {
             session = getSessionFactory().getCurrentSession();
             session.beginTransaction();
             String str = "DROP TABLE " + table + ";";
-            session.createSQLQuery(str);
+            session.createSQLQuery(str).addEntity(User.class).executeUpdate();
             session.getTransaction().commit();
-            session.close();
         } catch (Exception e) {
             if (session != null) {
                 session.getTransaction().rollback();
             }
             e.printStackTrace();
+        } finally {
+            assert session != null;
+            session.close();
         }
     }
 
@@ -59,17 +64,19 @@ public class UserDaoHibernateImpl implements UserDao {
     public void saveUser(String name, String lastName, byte age) {
         Session session = null;
         try {
-            session = getSessionFactory().getCurrentSession();
+            session = getSessionFactory().openSession();
             session.beginTransaction();
             User user = new User(name, lastName, age);
             session.save(user);
             session.getTransaction().commit();
-            session.close();
         } catch (Exception e) {
             if (session != null) {
                 session.getTransaction().rollback();
             }
             e.printStackTrace();
+        } finally {
+            assert session != null;
+            session.close();
         }
     }
 
@@ -82,12 +89,14 @@ public class UserDaoHibernateImpl implements UserDao {
             User user = session.get(User.class, id);
             session.delete(user);
             session.getTransaction().commit();
-            session.close();
         } catch (Exception e) {
             if (session != null) {
                 session.getTransaction().rollback();
             }
             e.printStackTrace();
+        } finally {
+            assert session != null;
+            session.close();
         }
     }
 
@@ -95,19 +104,21 @@ public class UserDaoHibernateImpl implements UserDao {
     public List<User> getAllUsers() {
         Session session = null;
         try {
-            session = getSessionFactory().getCurrentSession();
+            session = getSessionFactory().openSession();
             session.beginTransaction();
             String str = "from " + User.class.getSimpleName();
 
             List<User> users = session.createQuery(str).getResultList();
             session.getTransaction().commit();
-            session.close();
             return users;
         } catch (Exception e) {
             if (session != null) {
                 session.getTransaction().rollback();
             }
             e.printStackTrace();
+        } finally {
+            assert session != null;
+            session.close();
         }
         return null;
     }
@@ -120,13 +131,15 @@ public class UserDaoHibernateImpl implements UserDao {
             session.beginTransaction();
             String str = "DELETE FROM " + User.class.getSimpleName();
             session.createQuery(str).executeUpdate();
-            //session.getTransaction().commit();
-            session.close();
+            session.getTransaction().commit();
         } catch (Exception e) {
             if (session != null) {
                 session.getTransaction().rollback();
             }
             e.printStackTrace();
+        } finally {
+            assert session != null;
+            session.close();
         }
     }
 }
